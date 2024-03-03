@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DashBoard</title>
+</head>
+<style>
+    body {
+  background: #fff;
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin:0;
+  padding:0;
+}
+
+.navbar {
+        display: flex;
+        justify-content: flex-end; /* Align buttons to the right */
+        background-color: #f2f2f2; /* Add background color as needed */
+        padding: 10px; /* Add padding as needed */
+    }
+
+.function_buttons {
+background: #0074b8; /* Solid blue background color */
+background: linear-gradient(45deg, #0074b8, #0099ff); /* Gradient background from blue to light blue */
+padding:10px;
+text-decoration:none;
+color:white;
+font-size:18px;
+box-decoration:none;
+    }
+
+</style>
+<body>
+<div class="navbar">
+    <button class="function_buttons"><a class="nav-link" href="addproducts">Add Products</a></button>
+    <button class="function_buttons" type="submit">Update Products</button>
+    <button class="function_buttons" type="submit">Delete Products</button>
+</div>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Products</title>
+</head>
+<style>
+   @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.header{
+text-align:center;
+font-weight:bold;
+}
+.add-product-form{
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: left;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.add-product-form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.product-img-upload-input{
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: pink;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.add-product-form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background-color: #328f8a;
+  background: linear-gradient(45deg, #0074b8, #0099ff);
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+
+.input-with-prefix {
+    display: flex;
+    align-items: center;
+}
+
+.prefix {
+    margin-right: 5px;
+}
+.file-upload-row-element{
+display:block;
+}
+.input-file{
+display:block;
+}
+.product-image-label{
+display:block;
+width:150px;
+text-align:center;
+background: #0074b8; /* Solid blue background color */
+background: linear-gradient(45deg, #0074b8, #0099ff);
+color:white;
+padding:10px;
+margin:10px auto;
+border-radius:5px;
+cursor:pointer;
+}
+body {
+  background: #0074b8; /* Solid blue background color */
+  background: linear-gradient(45deg, #0074b8, #0099ff); /* Gradient background from blue to light blue */
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+</style>
+
+<body>
+
+
+<div class="signup-container">
+
+    <form class="add-product-form" enctype="multipart/form-data ">
+        <h1 class="header">Add Products</h1>
+        <div class="form-row">
+            <label class="label">Product Name</label>
+            <input type="text" required name="productname"/>
+        </div>
+        <div class="form-row">
+            <label class="label">Product Code</label>
+            <input type="text" required name="productcode"/>
+        </div>
+        <div class="form-row">
+            <label class="label">Product Category</label>
+            <input type="text" required name="productcategory"/>
+        </div>
+        <div class="form-row">
+            <label class="label">Quantity</label>
+            <input type="number" required name="productquantity"/>
+        </div>
+        <div class="form-row">
+            <label class="label">Brand</label>
+            <input type="text" required name="productbrand"/>
+        </div>
+        <div class="form-row">
+            <label class="label">Description</label>
+            <input type="text" required name="productdescription"/>
+        </div>
+
+        <div class="product-img-upload-input">
+            <div class ="file-upload-row-element">
+            <input type="file" accept="image/jpeg,image/png,image/jpg" id="product-img" class="input-file" multiple="3"required name="productdescription"/>
+            </div>
+                <label for="product-img" class="product-image-label">Add File</label>
+
+        </div>
+        <div class="form-row">
+            <label class="label">Price per unit</label>
+            <div class="input-with-prefix">
+                <span class="prefix">Rs.</span>
+                <input type="number" required name="priceperunit"/>
+            </div>
+        </div>
+        <button type="submit">Add Product</button>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelector('.add-product-form').addEventListener('submit', function(e){
+
+     e.preventDefault();
+      const productname=document.querySelector('input[name="productname"]').value;
+      const productcode=document.querySelector('input[name="productcode"]').value;
+      const productcategory=document.querySelector('input[name="productcategory"]').value;
+      const productquantity=document.querySelector('input[name="productquantity"]').value;
+      const productprice=document.querySelector('input[name="priceperunit"]').value;
+      const productbrand=document.querySelector('input[name="productbrand"]').value;
+      const productdescription=document.querySelector('input[name="productdescription"]').value;
+      const productimg = document.querySelector('input[name="input-file"]');
+
+
+       if (productimg) {
+        const files = productimg.files;
+        if (files.length > 0) {
+            const firstFile = files[0];
+            console.log("Selected file:", firstFile);
+        } else {
+            console.log("No file selected.");
+        }
+    } else {
+        console.error("Input element not found.");
+    }
+
+      const productData = {
+      productname,
+      productcode,
+      productcategory,
+      productquantity,
+      productprice,
+      productbrand,
+      productdescription,
+      productimg
+      }
+
+
+
+      addProducts(productData);
+
+      function addProducts(productData){
+      console.log("sending data to addproduct api");
+      fetch('http://localhost:8080/addproducts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        })
+     .then(response => {
+    if (response.ok) {
+        return response.json(); // This returns a Promise that resolves with the JSON data
+    } else {
+        console.error('Product adding failed');
+        throw new Error('Product adding failed');
+    }
+})
+.then(data => {
+    console.log('Full API Response:', data);
+
+    const status = data.status || 'Login failed'; // Default status if not provided
+    const redirectURL = data.redirectURL; // Allow undefined, no default value
+
+    switch (status) {
+        case '':
+            if (redirectURL !== undefined) {
+                // Redirect to the specified URL for authenticated users
+                console.log('User is authenticated. Redirecting to:', redirectURL);
+                window.location.href = redirectURL;
+            } else {
+                // Handle the case where redirectURL is undefined for authenticated users
+                console.error('Redirect URL is undefined for authenticated user.');
+            }
+            // Add any additional logic or UI updates for authenticated users
+            break;
+            case 'Invalid username or password':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'Invalid Email or Password';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User account is blocked! Please contact the support center':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User account is blocked! Please contact support.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User does not exist! Please Sign Up':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User does not exist! Please signup.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User account is blocked! Please contact the support center':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User account is blocked! Please contact support.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+        // Handle other cases similarly
+        default:
+            // Handle any other cases or display an error message
+            console.error('Unknown status:', status);
+            break;
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+});
+
+    }
+});
+
+
+     });
+
+
+</script>
+
+</body>
+</html>

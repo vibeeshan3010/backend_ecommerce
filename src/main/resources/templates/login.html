@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Login to Ecom</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+header .header{
+  background-color: #fff;
+  height: 45px;
+}
+header a img{
+  width: 134px;
+margin-top: 4px;
+}
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.login-page .form .login{
+  margin-top: -31px;
+margin-bottom: 26px;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background-color: #328f8a;
+  background: linear-gradient(45deg, #0074b8, #0099ff);
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  margin-bottom: 15px;
+  color: #0e76ad;
+  text-decoration: none;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.forgotpassword{
+text-decoration:none;
+color: #0e76ad;
+margin-bottom:15px;
+}
+.fplink{
+text-decoration:none;
+color: #0e76ad;
+}
+.dashboardlink{
+text-decoration:none;
+color: #fff;
+}
+
+body {
+  background: #0074b8; /* Solid blue background color */
+  background: linear-gradient(45deg, #0074b8, #0099ff); /* Gradient background from blue to light blue */
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+</style>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('.login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.querySelector('input[name="email"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const errorMessageEmail = document.getElementById('error_empty_email');
+        const errorMessagePassword = document.getElementById('error_empty_password');
+        if(email === ""){
+        errorMessageEmail.style.display = 'block';
+        return;
+        }
+        if(password === "" ){
+         errorMessagePassword.style.display = 'block';
+         return;
+        }
+
+        const loginData = {
+            email,
+            password
+        };
+        login(loginData);
+
+    });
+
+    function login(loginData) {
+        console.log("sending data to api");
+
+
+        fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData),
+        })
+     .then(response => {
+    if (response.ok) {
+        return response.json(); // This returns a Promise that resolves with the JSON data
+    } else {
+        console.error('Login failed');
+        throw new Error('Login failed');
+    }
+})
+.then(data => {
+    console.log('Full API Response:', data);
+
+    const status = data.status || 'Login failed'; // Default status if not provided
+    const redirectURL = data.redirectURL; // Allow undefined, no default value
+
+    switch (status) {
+        case 'User Authenticated':
+            if (redirectURL !== undefined) {
+                // Redirect to the specified URL for authenticated users
+                console.log('User is authenticated. Redirecting to:', redirectURL);
+                window.location.href = redirectURL;
+            } else {
+                // Handle the case where redirectURL is undefined for authenticated users
+                console.error('Redirect URL is undefined for authenticated user.');
+            }
+            // Add any additional logic or UI updates for authenticated users
+            break;
+            case 'Invalid username or password':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'Invalid Email or Password';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User account is blocked! Please contact the support center':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User account is blocked! Please contact support.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User does not exist! Please Sign Up':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User does not exist! Please signup.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+            case 'User account is blocked! Please contact the support center':
+            if(redirectURL !== undefined ){
+            const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'User account is blocked! Please contact support.';
+                    errorMessageElement.style.display = 'block';
+                }
+            }
+            break;
+        // Handle other cases similarly
+        default:
+            // Handle any other cases or display an error message
+            console.error('Unknown status:', status);
+            break;
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+});
+
+    }
+});
+</script>
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <div class="login">
+            <div class="login-header">
+                <h3>LOGIN</h3>
+                <p>Please enter your credentials to login.</p>
+            </div>
+        </div>
+        <form class="login-form">
+            <input type="email" placeholder="email" name="email"/>
+            <p id="error_empty_email" style="text-align: center; color: red; font-size: 14px; display: none;">Email cannot be empty!</p>
+            <input type="password" placeholder="password" name="password"/>
+            <p id="error_empty_password" style="text-align: center; color: red; font-size: 14px; display: none;">Password cannot be empty!</p>
+            <p class="forgotpassword"><a class="fplink" href="forgotpassword">Forgot Password?</a></p>
+            <p id="error-message" style="text-align: center; color: red; font-size: 14px; display: none;"></p>
+            <button class="dashboardlink" type="submit">Login</button>
+            <p class="message">Not registered? <a href="register">Create an account</a></p>
+        </form>
+    </div>
+</div>
+</body>
+</body>
+</html>
